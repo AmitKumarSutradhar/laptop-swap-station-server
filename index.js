@@ -243,19 +243,39 @@ async function run() {
             res.send(users);
         });
 
-        // app.get('/users/admin/:email', async (req, res) => {
-        //     const email = req.params.email;
-        //     const query = { email }
-        //     const user = await usersCollection.findOne(query);
-        //     res.send({ isAdmin: user?.role === 'admin' });
-        // })
+        // For User Log In & Register Data Set on db 
+        app.put('/users', async (req, res) => {
+            const query = req.body;
+            const update = { $set: query };
+            const options = { upsert: true };
+            const result = await usersCollection.updateOne(query, update, options);
 
-        app.post('/users', async (req, res) => {
-            const user = req.body;
-            console.log(user);
-            const result = await usersCollection.insertOne(user);
             res.send(result);
         });
+
+
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        })
+
+        app.get('/users/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isSeller: user?.role === 'seller' });
+        })
+
+        app.get('/users/buyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isSeller: user?.role === 'buyer' });
+        })
+
+
 
         // app.put('/users/admin/:id', verifyJWT, verifyAdmin, async (req, res) => {
         //     const id = req.params.id;
