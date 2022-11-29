@@ -20,11 +20,7 @@ async function run() {
     try {
         const productsCollection = client.db('laptop-swap-station').collection('products');
         const categoriesCollection = client.db('laptop-swap-station').collection('categories');
-        // const appointmentOptionCollection = client.db('doctorsPortal').collection('appointmentOptions');
-        // const bookingsCollection = client.db('doctorsPortal').collection('bookings');
         const usersCollection = client.db('laptop-swap-station').collection('users');
-        // const doctorsCollection = client.db('doctorsPortal').collection('doctors');
-        // const paymentsCollection = client.db('doctorsPortal').collection('payments');
 
 
         // const verifyAdmin = async (req, res, next) => {
@@ -37,13 +33,6 @@ async function run() {
         //     }
         //     next();
         // }
-
-
-        // app.get('/categories', async (req, res) => {
-        //     const query = {};
-        //     const categories = await categoriesCollection.find(query).toArray();
-        //     res.send(categories);
-        // });
 
 
         app.get('/products', async (req, res) => {
@@ -74,7 +63,6 @@ async function run() {
                     category_id: req.query.category_id
                 }
             }
-            console.log(query);
             const cursor = productsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
@@ -226,6 +214,13 @@ async function run() {
         //     res.send(result);
         // })
 
+
+
+
+
+
+
+
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
@@ -272,8 +267,26 @@ async function run() {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
-            res.send({ isSeller: user?.role === 'buyer' });
+            res.send({ isBuyer: user?.role === 'buyer' });
         })
+
+        app.get('/users/role', async (req, res) => {
+            let query = {};
+            if (req.query.role) {
+                query = {
+                    role: req.query.role
+                }
+            }
+            console.log(query);
+            const cursor = usersCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+
+
+
+
 
 
 
