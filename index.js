@@ -41,6 +41,14 @@ async function run() {
             res.send(products);
         });
 
+        app.post('/products', async (req, res) => {
+            const postProduct = req.body;
+            console.log(postProduct);
+
+            const result = await productsCollection.insertOne(postProduct);
+            res.send(result);
+        });
+
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -277,7 +285,6 @@ async function run() {
                     role: req.query.role
                 }
             }
-            console.log(query);
             const cursor = usersCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
