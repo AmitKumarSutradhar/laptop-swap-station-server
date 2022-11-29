@@ -14,7 +14,8 @@ app.use(express.json());
 
 
 
-const uri = 'mongodb+srv://laptop-swap-station:e4o2vdngLISw6zBS@cluster0.qctdu57.mongodb.net/?retryWrites=true&w=majority';
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qctdu57.mongodb.net/?retryWrites=true&w=majority`;
+console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
     try {
@@ -43,8 +44,6 @@ async function run() {
 
         app.post('/products', async (req, res) => {
             const postProduct = req.body;
-            console.log(postProduct);
-
             const result = await productsCollection.insertOne(postProduct);
             res.send(result);
         });
