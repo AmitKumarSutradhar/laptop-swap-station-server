@@ -17,6 +17,8 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qctdu57.mongodb.net/?retryWrites=true&w=majority`;
 console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+
 async function run() {
     try {
         const productsCollection = client.db('laptop-swap-station').collection('products');
@@ -88,14 +90,14 @@ async function run() {
             res.status(403).send({ accessToken: '' })
         });
 
-        app.get('/users', async (req, res) => {
+        app.get('/users', verifyJWT, verifyAdmin, async (req, res) => {
             const query = {};
             const users = await usersCollection.find(query).toArray();
             res.send(users);
         });
 
         // For User Log In & Register Data Set on db 
-        app.put('/users', async (req, res) => {
+        app.put('/users', verifyJWT, verifyAdmin, async (req, res) => {
             const query = req.body;
             const update = { $set: query };
             const options = { upsert: true };
@@ -105,28 +107,28 @@ async function run() {
         });
 
 
-        app.get('/users/admin/:email', async (req, res) => {
+        app.get('/users/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isAdmin: user?.role === 'admin' });
         })
 
-        app.get('/users/seller/:email', async (req, res) => {
+        app.get('/users/seller/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isSeller: user?.role === 'seller' });
         })
 
-        app.get('/users/buyer/:email', async (req, res) => {
+        app.get('/users/buyer/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isBuyer: user?.role === 'buyer' });
         })
 
-        app.get('/users/role', async (req, res) => {
+        app.get('/users/role', verifyJWT, verifyAdmin, async (req, res) => {
             let query = {};
             if (req.query.role) {
                 query = {
